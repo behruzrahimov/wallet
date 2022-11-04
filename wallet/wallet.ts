@@ -17,7 +17,6 @@ export class FileStorage implements Storage {
     localStorage.getItem(key);
   }
 }
-
 export class Wallet {
   constructor(private storage: Storage) {}
   async create(): Promise<void> {
@@ -30,8 +29,6 @@ export class Wallet {
   async sign(content: string): Promise<string> {
     const PrivateKey: string = localStorage.getItem("PrivateKeyEd25519");
     const PublicKey: string = localStorage.getItem("PublicKeyEd25519");
-    // console.log("signPrivateKey", PrivateKey);
-    // console.log("signPublicKey", PublicKey);
     const sign = await signature(content, PublicKey, PrivateKey);
     await this.storage.setItem("Signature", sign);
     return sign;

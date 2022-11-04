@@ -9,7 +9,6 @@ async function wallet() {
     await newWallet.verify(sign, "I am president");
     await newWallet.encrypt("I am president");
     const encryptText: string = localStorage.getItem("EncryptText");
-    console.log("Encrypt:", encryptText);
     await newWallet.decrypt(encryptText);
   } catch (e: any) {
     console.log(e.message);

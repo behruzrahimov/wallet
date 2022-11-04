@@ -10,12 +10,7 @@ export async function signature(
     content,
     Buffer.from(PrivateKey, "hex")
   );
-  // const opened = Buffer.from(
-  //   sodium.crypto_sign_open(signed, Buffer.from(PublicKey, "hex"))
-  // );
   const signedToString = Buffer.from(signed).toString("hex");
   console.log("Signature:", signedToString);
-  // console.log("opened:", opened);
-
   return signedToString;
 }
