@@ -6,4 +6,4 @@ uploads/*
 !uploads/.gitkeep
 npm-debug.log
 tsconfig.tsbuildinfo
-.env
+data/
