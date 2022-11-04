@@ -11,6 +11,6 @@ export async function verify(
     content,
     new Uint8Array(Buffer.from(publicKey, "hex"))
   );
-  console.log("verify:", verify);
+  console.log("Verify:", verify);
   return verify;
 }

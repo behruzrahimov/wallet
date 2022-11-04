@@ -38,7 +38,6 @@ export class Wallet {
   }
   async verify(signature: string, content: string): Promise<boolean> {
     const PublicKeyEd25519: string = localStorage.getItem("PublicKeyEd25519");
-    console.log("verifyPublicKey", PublicKeyEd25519);
     return verify(signature, content, PublicKeyEd25519);
   }
   async encrypt(content: string): Promise<string> {
