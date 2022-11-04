@@ -1,4 +1,4 @@
-import { localStorage } from "./wallet/ls";
+import { localStorage } from "./wallet/localStorage";
 import { fileStorage, Wallet } from "./wallet/wallet";
 async function wallet() {
   try {

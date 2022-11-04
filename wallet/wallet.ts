@@ -4,7 +4,7 @@ import { signature } from "./signature";
 import { encrypt } from "./encrypt";
 import { decrypt } from "./decrypt";
 import { LsType } from "./types";
-import { localStorage } from "./ls";
+import { localStorage } from "./localStorage";
 import * as _sodium from "libsodium-wrappers";
 export interface Storage {
   setItem(key: string, value: string): Promise<void>;
@@ -33,15 +33,15 @@ export class Wallet {
   async sign(content: string): Promise<string> {
     const PrivateKey: string = localStorage.getItem("PrivateKey");
     const PublicKey: string = localStorage.getItem("PublicKey");
-    console.log("signPrivateKey", PrivateKey);
-    console.log("signPublicKey", PublicKey);
+    // console.log("signPrivateKey", PrivateKey);
+    // console.log("signPublicKey", PublicKey);
     const sign = await signature(content, PublicKey, PrivateKey);
     await this.storage.setItem("Signature", sign);
     return sign;
   }
   async verify(signature: string, content: string): Promise<boolean> {
     const publicKey: string = localStorage.getItem("PublicKey");
-    console.log("verifyPublicKey", publicKey);
+    // console.log("verifyPublicKey", publicKey);
     return verify(signature, content, publicKey);
   }
   async encrypt(content: string): Promise<string> {
