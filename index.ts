@@ -1,8 +1,8 @@
 import { localStorage } from "./wallet/localStorage";
-import { fileStorage, Wallet } from "./wallet/wallet";
+import { FileStorage, Wallet } from "./wallet/wallet";
 async function wallet() {
   try {
-    const newWallet = new Wallet(new fileStorage(null as any));
+    const newWallet = new Wallet(new FileStorage());
     await newWallet.create();
     await newWallet.sign("I am president");
     const sign = localStorage.getItem("Signature");

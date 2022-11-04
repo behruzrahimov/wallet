@@ -1,20 +1,16 @@
 import * as _sodium from "libsodium-wrappers";
-export async function decrypt(content: string, key: string): Promise<string> {
+export async function decrypt(
+  content: string,
+  PublicKeyX25519: string,
+  PrivateKeyX25519: string
+): Promise<string> {
   await _sodium.ready;
   const sodium = _sodium;
-  const nonce = Buffer.from(
-    "404142434445464748494a4b4c4d4e4f5051525354555657",
-    "hex"
-  );
-
   const decrypt = sodium.to_string(
-    sodium.crypto_aead_xchacha20poly1305_ietf_decrypt_detached(
-      null,
-      new Uint8Array(Buffer.from(JSON.parse(content).ciphertext, "hex")),
-      new Uint8Array(Buffer.from(JSON.parse(content).mac, "hex")),
-      null,
-      nonce,
-      new Uint8Array(Buffer.from(key, "hex"))
+    sodium.crypto_box_seal_open(
+      new Uint8Array(Buffer.from(content, "hex")),
+      new Uint8Array(Buffer.from(PublicKeyX25519, "hex")),
+      new Uint8Array(Buffer.from(PrivateKeyX25519, "hex"))
     )
   );
   console.log("Decrypt:", decrypt);

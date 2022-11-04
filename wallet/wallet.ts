@@ -3,36 +3,33 @@ import { generateKay } from "./generateKey";
 import { signature } from "./signature";
 import { encrypt } from "./encrypt";
 import { decrypt } from "./decrypt";
-import { LsType } from "./types";
 import { localStorage } from "./localStorage";
 import * as _sodium from "libsodium-wrappers";
 export interface Storage {
   setItem(key: string, value: string): Promise<void>;
   getItem(key: string): Promise<string>;
 }
-export class fileStorage implements Storage {
-  private ls: LsType;
-  constructor(private storage: Storage) {
-    this.ls = localStorage;
-  }
+export class FileStorage implements Storage {
   async setItem(key: string, value: string): Promise<void> {
-    this.ls.setItem(key, value);
+    localStorage.setItem(key, value);
   }
   async getItem(key: string): Promise<any> {
-    this.ls.getItem(key);
+    localStorage.getItem(key);
   }
 }
 
 export class Wallet {
   constructor(private storage: Storage) {}
   async create(): Promise<void> {
-    const keyPair = await generateKay();
-    await this.storage.setItem("PublicKey", keyPair.publicKey);
-    await this.storage.setItem("PrivateKey", keyPair.privateKey);
+    const keys = await generateKay();
+    await this.storage.setItem("PublicKeyEd25519", keys.key1.publicKey);
+    await this.storage.setItem("PrivateKeyEd25519", keys.key1.privateKey);
+    await this.storage.setItem("PublicKeyX25519", keys.key2.publicKey);
+    await this.storage.setItem("PrivateKeyX25519", keys.key2.privateKey);
   }
   async sign(content: string): Promise<string> {
-    const PrivateKey: string = localStorage.getItem("PrivateKey");
-    const PublicKey: string = localStorage.getItem("PublicKey");
+    const PrivateKey: string = localStorage.getItem("PrivateKeyEd25519");
+    const PublicKey: string = localStorage.getItem("PublicKeyEd25519");
     // console.log("signPrivateKey", PrivateKey);
     // console.log("signPublicKey", PublicKey);
     const sign = await signature(content, PublicKey, PrivateKey);
@@ -40,22 +37,19 @@ export class Wallet {
     return sign;
   }
   async verify(signature: string, content: string): Promise<boolean> {
-    const publicKey: string = localStorage.getItem("PublicKey");
-    // console.log("verifyPublicKey", publicKey);
-    return verify(signature, content, publicKey);
+    const PublicKeyEd25519: string = localStorage.getItem("PublicKeyEd25519");
+    console.log("verifyPublicKey", PublicKeyEd25519);
+    return verify(signature, content, PublicKeyEd25519);
   }
   async encrypt(content: string): Promise<string> {
-    await _sodium.ready;
-    const sodium = _sodium;
-    const clientKeys = sodium.crypto_kx_keypair();
-    const PublicKey: string = Buffer.from(clientKeys.publicKey).toString("hex");
-    await this.storage.setItem("nonce_public", PublicKey);
-    const encryptText = await encrypt(content, PublicKey);
+    const PublicKeyX25519: string = localStorage.getItem("PublicKeyX25519");
+    const encryptText = await encrypt(content, PublicKeyX25519);
     await this.storage.setItem("EncryptText", encryptText);
     return encryptText;
   }
   async decrypt(content: string): Promise<string> {
-    const key = localStorage.getItem("nonce_public");
-    return decrypt(content, key);
+    const PrivateKeyX25519 = localStorage.getItem("PrivateKeyX25519");
+    const PublicKeyX25519 = localStorage.getItem("PublicKeyX25519");
+    return decrypt(content, PublicKeyX25519, PrivateKeyX25519);
   }
 }
